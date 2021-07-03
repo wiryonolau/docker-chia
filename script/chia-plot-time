@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+import os
+import glob
+from datetime import datetime
+
+plotdir = os.path.realpath("/plots")
+files = glob.glob("{}/plot-*.plot".format(plotdir))
+files.sort(key=os.path.getctime)
+for f in files:
+    filename = os.path.basename(f)
+    ctime = datetime.fromtimestamp(os.path.getctime(f))
+    plot_start_time = datetime.strptime(filename[9:25], "%Y-%m-%d-%H-%M")
+    diff = (ctime - plot_start_time).total_seconds() / 3600
+    diff = "{:.5f}".format(diff)
+
+    print("{}\t{} to {}\t{}".format(filename[-15:], plot_start_time, ctime.strftime("%Y-%m-%d %H:%M:%S"), diff.rjust(10)))

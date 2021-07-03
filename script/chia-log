@@ -1,0 +1,2 @@
+#!/bin/bash
+tail -f /home/chia/.chia/mainnet/log/debug.log

@@ -1,0 +1,17 @@
+#!/bin/bash
+CHALLENGE=${CHALLENGE:-5}
+
+if [ -d /farmer-ca ]; then
+    chia init -c /farmer-ca
+fi
+if [ -d /plots ]; then
+    chia plots add -d /plots
+fi
+chia configure --set-farmer-peer ${FARMER_ADDR}:${FARMER_PORT}
+chia start harvester
+if [ -d /plots ]; then
+    chia plots check -n ${CHALLENGE} -l
+fi
+while true; do
+    sleep 1m
+done

@@ -1,0 +1,12 @@
+#!/bin/bash
+CHALLENGE=${CHALLENGE:-5}
+if [ -d /plots ]; then
+    chia plots add -d /plots
+fi
+chia start farmer
+if [ -d /plots ]; then
+    chia plots check -n ${CHALLENGE} -l
+fi
+while true; do
+    sleep 1m
+done

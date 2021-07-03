@@ -1,0 +1,39 @@
+#!/bin/bash
+THREAD=${THREAD:-4}
+PLOTSIZE=${PLOTSIZE:-32}
+BUFFER=${BUFFER:-3389}
+BUCKETS=${BUCKETS:-128}
+FARMER_KEY=${FARMER_KEY}
+POOL_KEY=${POOL_KEY}
+CLEAR_TMP=${CLEAR_TMP:-1}
+NOBITFIELD=${NOBITFIELD}
+DELAY=${DELAY:-0}
+PLOTNUM=${PLOTNUM:-1}
+
+chia init
+if [ ! -d /plots ]; then
+    echo "/plots directory not exist"
+    exit 1
+fi
+
+# Remove unfinished plots
+if [ "${CLEAR_TMP}" -eq "1" ]; then
+    rm -rf /tmp/*
+fi
+
+if [ ! -z "${NOBITFIELD}" ]; then
+    NOBITFIELD="-e"
+fi
+
+if [ "${PLOTNUM}" -gt "0" ]; then
+    PLOTNUM="-n ${PLOTNUM}"
+else
+    PLOTNUM=""
+fi
+
+sleep ${DELAY}
+if [ -z ${FARMER_KEY} ] || [ -z ${POOL_KEY} ]; then
+    chia plots create -k ${PLOTSIZE} -u ${BUCKETS} -b ${BUFFER} -r ${THREAD} ${PLOTNUM} ${NOBITFIELD} -t /tmp -d /plots
+else
+    chia plots create -k ${PLOTSIZE} -u ${BUCKETS} -b ${BUFFER} -r ${THREAD} ${PLOTNUM} ${NOBITFIELD} -t /tmp -d /plots -p ${POOL_KEY} -f ${FARMER_KEY}
+fi

@@ -1,0 +1,5 @@
+#!/bin/bash
+chia start $1
+while true; do
+    sleep 1m
+done
