@@ -1,0 +1,5 @@
+#!/bin/bash
+chia start wallet
+while true; do
+    sleep 1m
+done
