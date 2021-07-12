@@ -18,9 +18,9 @@ if [ ! -d /plots ]; then
     exit 1
 fi
 
-# Remove unfinished plots
+# Remove unfinished plots, specific to .tmp file
 if [ "${CLEAR_TMP}" -eq "1" ]; then
-    rm -rf /tmp/*
+    ls | grep -P "plot.*.tmp$" | xargs -d "\n" rm
 fi
 
 if [ ! -z "${NOBITFIELD}" ]; then
