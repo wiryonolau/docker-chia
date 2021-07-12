@@ -9,6 +9,8 @@ CLEAR_TMP=${CLEAR_TMP:-1}
 NOBITFIELD=${NOBITFIELD}
 DELAY=${DELAY:-0}
 PLOTNUM=${PLOTNUM:-1}
+# Require version ^1.2
+POOL_CONTRACT_ADDR=${POOL_CONTRACT_ADDR}
 
 chia init
 if [ ! -d /plots ]; then
@@ -32,8 +34,12 @@ else
 fi
 
 sleep ${DELAY}
-if [ -z ${FARMER_KEY} ] || [ -z ${POOL_KEY} ]; then
+if [ -z ${FARMER_KEY} ]; then
     chia plots create -k ${PLOTSIZE} -u ${BUCKETS} -b ${BUFFER} -r ${THREAD} ${PLOTNUM} ${NOBITFIELD} -t /tmp -d /plots
 else
-    chia plots create -k ${PLOTSIZE} -u ${BUCKETS} -b ${BUFFER} -r ${THREAD} ${PLOTNUM} ${NOBITFIELD} -t /tmp -d /plots -p ${POOL_KEY} -f ${FARMER_KEY}
+    if [ -z ${POOL_CONTRACT_ADDR} ]; then
+        chia plots create -k ${PLOTSIZE} -u ${BUCKETS} -b ${BUFFER} -r ${THREAD} ${PLOTNUM} ${NOBITFIELD} -t /tmp -d /plots -p ${POOL_KEY} -f ${FARMER_KEY}
+    else
+        chia plots create -k ${PLOTSIZE} -u ${BUCKETS} -b ${BUFFER} -r ${THREAD} ${PLOTNUM} ${NOBITFIELD} -t /tmp -d /plots -c ${POOL_CONTRACT_ADDR} -f ${FARMER_KEY}
+    fi
 fi
