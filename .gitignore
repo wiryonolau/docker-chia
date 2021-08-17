@@ -1,0 +1,15 @@
+*.swp                                                                                                                                                                        
+*.bak
+.env
+build
+dist
+*.local
+*.local.*
+*.dist
+*.dist.*
+auth
+*~
+*.tar.gz
+*.zip
+docker-compose.yml
+docker-compose.env
