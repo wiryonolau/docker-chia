@@ -10,6 +10,7 @@ EXPOSE 8444 8447 8555
 RUN useradd -m -s /bin/bash chia \
     && usermod -u ${PUID} chia \
     && groupmod -g ${PGID} chia \ 
+    && usermod -a -G tty chia \
     && pip install --extra-index-url https://hosted.chia.net/simple/ chia-blockchain==${CHIAVERSION} miniupnpc==2.1
 
 COPY ./docker-entrypoint.sh /docker-entrypoint.sh
