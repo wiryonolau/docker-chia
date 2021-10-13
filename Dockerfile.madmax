@@ -1,0 +1,35 @@
+ARG PYTHONVERSION=3.8
+FROM python:${PYTHONVERSION}
+ARG CHIAVERSION=1.2.3
+ARG CMAKEVERSION=3.14.7
+ARG PUID=1000
+ARG PGID=1000
+
+EXPOSE 8444 8447 8555
+
+#INSTALL CMAKE
+RUN cd /tmp \
+    && wget https://github.com/Kitware/CMake/releases/download/v${CMAKEVERSION}/cmake-${CMAKEVERSION}.tar.gz \ 
+    && tar -zxvf cmake-${CMAKEVERSION}.tar.gz \
+    && cd /tmp/cmake-${CMAKEVERSION} \
+    && ./bootstrap \
+    && make \
+    && make install \
+    && cmake --version \
+    && rm -rf /tmp/*
+
+#INSTALL MADMAX PLOTTER
+RUN cd /tmp \
+    && apt-get update \
+    && apt-get install -y libsodium-dev g++ git build-essential \
+    && git clone https://github.com/madMAx43v3r/chia-plotter.git \
+    && cd /tmp/chia-plotter \
+    && git submodule update --init \
+    && ./make_devel.sh \
+    && cp ./build/chia_plot /usr/local/bin/chia-plot-mm \
+    && apt-get clean \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/{apt,dpkg,cache,log}/* \
+    && rm -rf /tmp/*
+
+#COPY /usr/local/bin/chia-plot-mm TO /script folder 

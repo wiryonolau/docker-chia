@@ -5,28 +5,36 @@ BUFFER=${BUFFER:-3389}
 BUCKETS=${BUCKETS:-128}
 FARMER_KEY=${FARMER_KEY}
 POOL_KEY=${POOL_KEY}
-CLEAR_TMP=${CLEAR_TMP:-1}
 NOBITFIELD=${NOBITFIELD}
-DELAY=${DELAY:-0}
 PLOTNUM=${PLOTNUM:-1}
 # Require version ^1.2
 POOL_CONTRACT_ADDR=${POOL_CONTRACT_ADDR}
+TMPDIR=${TMPDIR:-/tmp/}
+TMPDIR2=${TMPDIR2:-/tmp/}
+PLOTDIR=${PLOTDIR:-/plots/}
+# Madmax only
+WAITFORCOPY=${WAITFORCOPY:-1}
+
+# Control
+USEMADMAX=${USEMADMAX:-0}
+CLEAR_TMP=${CLEAR_TMP:-1}
 
 chia init
-if [ ! -d /plots ]; then
+if [ ! -d "${PLOTDIR}" ]; then
     echo "/plots directory not exist"
     exit 1
 fi
 
 # Remove unfinished plots, specific to .tmp file
 if [ "${CLEAR_TMP}" -eq "1" ]; then
-    ls -d /tmp/* | grep -P "plot.*.tmp$" | xargs -d "\n" rm
+    ls "${TMPDIR}" | grep -P "plot.*.tmp$" | xargs -d "\n" rm
+    ls "${TMPDIR2}" | grep -P "plot.*.tmp$" | xargs -d "\n" rm
 fi
 
 # Check if target disk have sufficient space, size in K
-SPACELEFT=$(df /plots | tail -n +2 |  awk '{ print $4 }')
+SPACELEFT=$(df "${PLOTDIR}" | tail -n +2 |  awk '{ print $4 }')
 if [ "${SPACELEFT}" -lt "120000000" ]; then
-    echo "/plots doesn't have enough space left ( <120GB )"
+    echo "${PLOTDIR} doesn't have enough space left ( <120GB )"
     exit 1
 fi
 
@@ -40,13 +48,56 @@ else
     PLOTNUM=""
 fi
 
-sleep ${DELAY}
+if [ "${USEMADMAX}" -eq "1" ]; then
+    COMMAND="/usr/local/bin/chia-plot-mm"
+    if [ "${WAITFORCOPY}" -eq "1" ]; then
+        WAITFORCOPY="--waitforcopy"
+    fi
+else
+    COMMAND="/usr/local/bin/chia-plot plots create"
+    WAITFORCOPY=""
+fi
+
 if [ -z ${FARMER_KEY} ]; then
-    chia plots create -k ${PLOTSIZE} -u ${BUCKETS} -b ${BUFFER} -r ${THREAD} ${PLOTNUM} ${NOBITFIELD} -t /tmp -d /plots
+    ${COMMAND} \
+        -k ${PLOTSIZE} \
+        -u ${BUCKETS} \
+        -b ${BUFFER} \
+        -r ${THREAD} \
+        -t ${TMPDIR} \
+        -2 ${TMPDIR2} \
+        -d ${PLOTDIR} \
+        ${PLOTNUM} \
+        ${NOBITFIELD} \
+        ${WAITFORCOPY}
 else
     if [ -z ${POOL_CONTRACT_ADDR} ]; then
-        chia plots create -k ${PLOTSIZE} -u ${BUCKETS} -b ${BUFFER} -r ${THREAD} ${PLOTNUM} ${NOBITFIELD} -t /tmp -d /plots -p ${POOL_KEY} -f ${FARMER_KEY}
+        ${COMMAND} \
+            -k ${PLOTSIZE} \
+            -u ${BUCKETS} \
+            -b ${BUFFER} \
+            -r ${THREAD} \
+            -t ${TMPDIR} \
+            -2 ${TMPDIR2} \
+            -d ${PLOTDIR} \
+            -p ${POOL_KEY} \
+            -f ${FARMER_KEY} \
+            ${PLOTNUM} \
+            ${NOBITFIELD} \
+            ${WAITFORCOPY}
     else
-        chia plots create -k ${PLOTSIZE} -u ${BUCKETS} -b ${BUFFER} -r ${THREAD} ${PLOTNUM} ${NOBITFIELD} -t /tmp -d /plots -c ${POOL_CONTRACT_ADDR} -f ${FARMER_KEY}
+        ${COMMAND} \
+            -k ${PLOTSIZE} \
+            -u ${BUCKETS} \
+            -b ${BUFFER} \
+            -r ${THREAD} \
+            -t ${TMPDIR} \
+            -2 ${TMPDIR2} \
+            -d ${PLOTDIR} \
+            -c ${POOL_CONTRACT_ADDR} \
+            -f ${FARMER_KEY} \
+            ${PLOTNUM} \
+            ${NOBITFIELD} \
+            ${WAITFORCOPY}
     fi
 fi
