@@ -1,6 +1,6 @@
 ARG PYTHONVERSION=3.8
 FROM python:${PYTHONVERSION}
-ARG CHIAVERSION=1.2.3
+ARG CHIAVERSION=1.2.10
 ARG CMAKEVERSION=3.14.7
 ARG PUID=1000
 ARG PGID=1000
@@ -12,7 +12,7 @@ RUN useradd -m -s /bin/bash chia \
     && usermod -u ${PUID} chia \
     && groupmod -g ${PGID} chia \ 
     && usermod -a -G tty chia \
-    && pip install --extra-index-url https://hosted.chia.net/simple/ chia-blockchain==${CHIAVERSION} miniupnpc==2.1
+    && pip install --extra-index-url https://pypi.chia.net/simple/ chia-blockchain==${CHIAVERSION} miniupnpc==2.2.2
 
 #INSTALL MADMAX DEPENDENCY
 RUN apt-get update \
