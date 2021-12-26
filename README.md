@@ -70,6 +70,21 @@ docker run \
 localhost/chia:1.1.6 chia-plot
 ```
 
+# Run using madmax
+Pool contract addr can be check in "chia plotnft show" command
+```bash
+docker run -d -it \
+    -v ~/chia-plots-tmp/plot1:/tmp \
+    -v ~/chia-plots:/plots \
+    -e PLOTNUM=1 \
+    -e THREAD=28 \
+    -e FARMER_KEY=your.pool.farmer.key \
+    -e POOL_CONTRACT_ADDR=your.pool.contract.addr\
+    -e USEMADMAX=1 \ 
+    -e BUCKETS=256 \
+localhost/chia:1.2.11 chia-plot
+```
+
 Docker environment for chia-plot
 | key | default | info |
 |---|---|---|

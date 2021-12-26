@@ -3,10 +3,12 @@ CHALLENGE=${CHALLENGE:-5}
 if [ -d /plots ]; then
     chia plots add -d /plots
 fi
+
+chia configure --log-level "${LOGLEVEL:-DEBUG}"
 chia start farmer
-if [ -d /plots ]; then
-    chia plots check -n ${CHALLENGE} -l
-fi
 while true; do
-    sleep 1m
+    if [ -d /plots ]; then
+        chia plots check -n ${CHALLENGE} -l
+    fi
+    sleep 1h
 done
