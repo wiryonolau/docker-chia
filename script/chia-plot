@@ -27,8 +27,8 @@ fi
 
 # Remove unfinished plots, specific to .tmp file
 if [ "${CLEAR_TMP}" -eq "1" ]; then
-    ls "${TMPDIR}" | grep -P "plot.*.tmp$" | xargs -d "\n" rm
-    ls "${TMPDIR2}" | grep -P "plot.*.tmp$" | xargs -d "\n" rm
+    ls -d "${TMPDIR}*" | grep -P "plot.*.tmp$" | xargs -d "\n" rm
+    ls -d "${TMPDIR2}*" | grep -P "plot.*.tmp$" | xargs -d "\n" rm
 fi
 
 # Check if target disk have sufficient space, size in K
