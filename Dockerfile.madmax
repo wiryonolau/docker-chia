@@ -1,11 +1,14 @@
-ARG PYTHONVERSION=3.8
+ARG PYTHONVERSION=3.8-slim
 FROM python:${PYTHONVERSION}
 ARG CHIAVERSION=1.2.3
-ARG CMAKEVERSION=3.14.7
+ARG CMAKEVERSION=3.22.1
 ARG PUID=1000
 ARG PGID=1000
 
 EXPOSE 8444 8447 8555
+
+RUN apt update \
+    && apt install -y wget git build-essential libssl-dev 
 
 #INSTALL CMAKE
 RUN cd /tmp \
@@ -32,4 +35,4 @@ RUN cd /tmp \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/* \
     && rm -rf /tmp/*
 
-#COPY /usr/local/bin/chia-plot-mm TO /script folder 
+# COPY /usr/local/bin/chia-plot-mm /script 

@@ -25,10 +25,15 @@ if [ ! -d "${PLOTDIR}" ]; then
     exit 1
 fi
 
+# Move finished plots to plotdir if exist
+# Might cause by power outage
+ls -d ${TMPDIR}* | grep -p "plot.*.plot$" | xargs -I {} -r -d "\n" mv {} ${PLOTDIR}
+ls -d ${TMPDIR2}* | grep -p "plot.*.plot$" | xargs -I {} -r -d "\n" mv {} ${PLOTDIR}
+
 # Remove unfinished plots, specific to .tmp file
 if [ "${CLEAR_TMP}" -eq "1" ]; then
-    ls -d ${TMPDIR}* | grep -P "plot.*.tmp$" | xargs -d "\n" rm
-    ls -d ${TMPDIR2}* | grep -P "plot.*.tmp$" | xargs -d "\n" rm
+    ls -d ${TMPDIR}* | grep -P "plot.*.tmp$" | xargs -r -d "\n" rm
+    ls -d ${TMPDIR2}* | grep -P "plot.*.tmp$" | xargs -r -d "\n" rm
 fi
 
 # Check if target disk have sufficient space, size in K
