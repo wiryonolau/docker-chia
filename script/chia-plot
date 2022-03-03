@@ -25,11 +25,6 @@ if [ ! -d "${PLOTDIR}" ]; then
     exit 1
 fi
 
-# Move finished plots to plotdir if exist
-# Might cause by power outage
-ls -d ${TMPDIR}* | grep -p "plot.*.plot$" | xargs -I {} -r -d "\n" mv {} ${PLOTDIR}
-ls -d ${TMPDIR2}* | grep -p "plot.*.plot$" | xargs -I {} -r -d "\n" mv {} ${PLOTDIR}
-
 # Remove unfinished plots, specific to .tmp file
 if [ "${CLEAR_TMP}" -eq "1" ]; then
     ls -d ${TMPDIR}* | grep -P "plot.*.tmp$" | xargs -r -d "\n" rm
@@ -42,6 +37,14 @@ if [ "${SPACELEFT}" -lt "120000000" ]; then
     echo "${PLOTDIR} doesn't have enough space left ( <120GB )"
     exit 1
 fi
+
+# Remove unfinished copy plot by chia
+ls -d ${PLOTDIR}* | grep -P "plot.*.tmp$" | xargs -r -d "\n" rm
+
+# Move finished plots to plotdir if exist
+# Might be cause by power outage
+ls -d ${TMPDIR}* | grep -P "plot.*.plot$" | xargs -I {} -r -d "\n" mv -f {} ${PLOTDIR}
+ls -d ${TMPDIR2}* | grep -P "plot.*.plot$" | xargs -I {} -r -d "\n" mv -f {} ${PLOTDIR}
 
 if [ ! -z "${NOBITFIELD}" ]; then
     NOBITFIELD="-e"

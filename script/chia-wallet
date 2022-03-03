@@ -1,5 +1,5 @@
 #!/bin/bash
-chia start wallet
+chia start wallet-only
 while true; do
     sleep 1m
 done
